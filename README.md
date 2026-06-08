@@ -198,3 +198,31 @@ Khi Terminal chạy giải nén xong xuôi, bật lại toàn bộ hệ thống
 # docker compose up -d
 ## SAU KHI GIẢI NÉN VÀ KHỞI ĐỘNG LẠI HỆ THỐNG MỌI THỨ LẠI HOẠT ĐỘNG LẠI BÌNH THƯỜNG
 ## <img width="1918" height="1036" alt="image" src="https://github.com/user-attachments/assets/33c8af2b-a02f-4771-9ff1-98489f1e5c2d" />
+
+## KẾT QUẢ TRIỂN KHAI THỰC TẾ <br>
+Hệ thống đã triển khai thực tế thành công và đạt được toàn bộ các mục tiêu đặt ra:
+
+1. Thu thập và Lưu trữ dữ liệu song song (Node-RED) <br>
+Xây dựng luồng logic trên Node-RED liên tục lấy dữ liệu giá Bitcoin động từ API nguồn thực tế.
+
+Hệ thống xử lý chuyển tiếp ghi dữ liệu song song vào InfluxDB (để lưu chuỗi thời gian lịch sử phục vụ vẽ biểu đồ) và vào MariaDB (lưu giá trị tức thời phục vụ gọi dữ liệu ngắn).
+
+2. Trực quan hóa Biểu đồ Thời gian thực (Grafana) <br>
+Kết nối thành công nguồn dữ liệu InfluxDB sang Grafana. Thiết lập Dashboard cấu hình chế độ tự động làm mới (Auto-Refresh mỗi 5 giây), tạo ra đồ thị biến động kéo <br>
+dãn liên tục theo tọa độ thời gian thực rất trực quan. <br>
+
+3. Lớp Back-end Flask API Ổn định <br>
+Xây dựng API Python tại cổng 5000 (/api/price), xử lý dứt điểm lỗi phân quyền mạng nội bộ giữa các container và tích hợp thuật toán thông minh tự động quét danh <br>
+sách bảng (bitcoin_history) để trả dữ liệu JSON chuẩn xác, hạn chế tối đa lỗi cứng tên bảng.
+
+5. Giao diện Front-end Nginx Tổng quan <br>
+Triển khai cổng Web tĩnh qua Nginx tại địa chỉ IP cục bộ máy chủ 192.168.1.14. Trang chủ hiển thị đồng bộ:
+
+Khung trên hiển thị số tiền USD tức thời (tự cập nhật mỗi 2 giây bằng kỹ thuật gọi Ajax ngầm tới Flask).
+
+Khung dưới nhúng trực tiếp biểu đồ lịch sử uốn lượn được truyền qua thẻ Iframe từ Grafana.
+
+5. Hệ thống Cảnh báo tự động qua Telegram (Alerting) <br>
+Thiết lập bộ lọc điều kiện trên Node-RED Function Node. Khi giá Bitcoin đột ngột nhảy vượt qua ngưỡng an toàn đã cấu hình, hệ thống tự động biên dịch thông điệp tường minh chứa giá trị lỗi và bắn tin nhắn cảnh báo khẩn cấp trực tiếp về Group Telegram gồm 3 thành viên (bao gồm Bot, Sinh viên và tài khoản Giảng viên chấm bài có ID: 1875746636).
+
+Dự án được hoàn thành với kết quả vận hành mượt mà và kiểm thử đóng gói thành công độc lập.
